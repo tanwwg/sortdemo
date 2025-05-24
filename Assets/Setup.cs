@@ -26,6 +26,8 @@ public class Setup : MonoBehaviour
 
     public TextMeshProUGUI statusText;
 
+    public CodeBehaviour code;
+
     public UnityEvent onStartSwap;
     public UnityEvent onEndSwap;    
 
@@ -75,7 +77,19 @@ public class Setup : MonoBehaviour
         target.position = endPos; // Snap to exact end at finish
     }
 
-    bool Compare(List<Box> boxes, int i, int j)
+    void Anim_Code(int codeLine, string status)
+    {
+        anims.Add(new AnimItem()
+        {
+            Execute = () =>
+            {
+                code.Mark(codeLine-1);
+                SetStatusText(status);
+            }
+        });
+    }
+
+    bool Compare(List<Box> boxes, int codeLine, string status, int i, int j)
     {
         var b1 = boxes[i];
         var b2 = boxes[j];
@@ -83,14 +97,15 @@ public class Setup : MonoBehaviour
         {
             Execute = () =>
             {
-                SetStatusText($"Compare [{i}] and [{j}]");
+                code.Mark(codeLine-1);
+                SetStatusText(status);
                 AnimateCompare(b1, b2);
             }
         });
         return boxes[i].value > boxes[j].value;
     }
     
-    void Swap(List<Box> boxes, int i, int j)
+    void Swap(List<Box> boxes, int codeLine, string status, int i, int j)
     {
         var b1 = boxes[i];
         var b2 = boxes[j];
@@ -99,7 +114,8 @@ public class Setup : MonoBehaviour
         {
             Execute = () =>
             {
-                SetStatusText($"Swap [{i}] and [{j}]");
+                code.Mark(codeLine-1);
+                SetStatusText(status);
                 AnimateSwap(b1, b2);
             },
             Reverse = () =>
@@ -108,19 +124,24 @@ public class Setup : MonoBehaviour
             },
             PostExecute = () =>
             {
-                SetStatusText($"Swap [{i}] and [{j}]");
+                code.Mark(codeLine-1);                
+                SetStatusText(status);
             }
         });
     }
 
     void BubbleSort(List<Box> boxes)
     {
+        Anim_Code(2, "for i in 0..6");
         for (var i = 0; i < boxes.Count - 1; i++)
         {
-            if (Compare(boxes, i, i + 1))
+            if (Compare(boxes, 3, $"i={i}  arr[{i}] > arr[{i+1}] ?", i, i + 1))
             {
-                Swap(boxes, i, i + 1);
+                Swap(boxes, 4, $"Swap arr[{i}] and arr[{i+1}]", i, i + 1);
+
+                Anim_Code(5, "Restart Loop");
                 BubbleSort(boxes);
+                
                 return;
             }
         }
@@ -130,13 +151,7 @@ public class Setup : MonoBehaviour
     {
         var list = new List<int> { 53, 17, 29, 5, 88, 22, 33 };
         
-        anims.Add(new AnimItem()
-        {
-            Execute = () =>
-            {
-                SetStatusText("Start of Bubble Sort");
-            }
-        });
+        Anim_Code(1, "Start of Bubble Sort");
         
         this.allBoxes = list.Select(i =>
         {
@@ -147,13 +162,8 @@ public class Setup : MonoBehaviour
             return fab;
         }).ToList();
         BubbleSort(allBoxes);
-        anims.Add(new AnimItem()
-        {
-            Execute = () =>
-            {
-                SetStatusText("End");
-            }
-        });
+        
+        Anim_Code(6, "End of Bubble Sort");
 
         Step();
     }
