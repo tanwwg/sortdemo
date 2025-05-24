@@ -161,7 +161,6 @@ public class Setup : MonoBehaviour
         
         index.Init(list.Count);
         
-        Anim_Code(1, "Start of Bubble Sort");
         
         
         this.allBoxes = list.Select(i =>
@@ -172,8 +171,9 @@ public class Setup : MonoBehaviour
             fab.value = i;
             return fab;
         }).ToList();
-        BubbleSort(allBoxes);
         
+        Anim_Code(1, "Start of Bubble Sort");
+        BubbleSort(allBoxes);
         Anim_Code(6, "End of Bubble Sort");
 
         Step();
