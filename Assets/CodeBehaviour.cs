@@ -12,8 +12,9 @@ public class CodeBehaviour : MonoBehaviour
     
     public List<string> origLines;
 
-    private void Awake()
+    public void Init(string srcCode)
     {
+        this.text.text = srcCode;
         this.origLines = text.text.Split("\n").ToList();
     }
 

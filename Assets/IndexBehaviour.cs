@@ -10,8 +10,12 @@ public class IndexBehaviour : MonoBehaviour
 
     public List<TextMeshProUGUI> indexFabs = new();
 
+    public Dictionary<string, int> marks = new();
+
     public void Init(int n)
     {
+        foreach (var f in indexFabs) Destroy(f.gameObject);
+        
         indexFabs = Enumerable.Range(0, n).Select(i =>
         {
             var idx = Instantiate(indexPrefab, indexLayout);
@@ -21,11 +25,39 @@ public class IndexBehaviour : MonoBehaviour
         }).ToList();
     }
 
-    public void Mark(int markIdx)
+    private string[] getMarks(int idx)
+    {
+        return marks
+            .Where(m => m.Value == idx)
+            .Select(m => m.Key)
+            .ToArray();
+    }
+
+    void Redraw()
     {
         for (var i = 0; i < indexFabs.Count; i++)
         {
-            indexFabs[i].text = i == markIdx ? $"<color=white>i = {i}" : i.ToString();
+            var lm = getMarks(i);
+            if (lm.Length == 0)
+            {
+                indexFabs[i].text = i.ToString();
+            }
+            else
+            {
+                indexFabs[i].text = string.Join("\n", lm.Select(m => $"<color=white>{m}={i}</color>"));
+            }
         }
+    }
+    
+    public void Unmark(string mark)
+    {
+        marks.Remove(mark);
+        Redraw();
+    }
+
+    public void Mark(string mark, int markIdx)
+    {
+        marks[mark] = markIdx;
+        Redraw();
     }
 }

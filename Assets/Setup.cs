@@ -39,12 +39,12 @@ public class Setup : MonoBehaviour
         b2.arrow.SetActive(true);
     }
 
-    void SetStatusText(string s)
+    public void SetStatusText(string s)
     {
         statusText.text = $"Step {animIndex + 1}: {s}";
     }
 
-    void HideArrows()
+    public void HideArrows()
     {
         foreach(var b in allBoxes) b.arrow.SetActive(false);
     }
@@ -83,7 +83,7 @@ public class Setup : MonoBehaviour
         target.position = endPos; // Snap to exact end at finish
     }
 
-    void Anim_Code(int codeLine, string status)
+    public void Anim_Code(int codeLine, string status)
     {
         anims.Add(new AnimItem()
         {
@@ -95,8 +95,24 @@ public class Setup : MonoBehaviour
             }
         });
     }
+    
+    public void Anim_Index(string status, int codeLine, string indexName, Box indexBox, int idx, string resetIndex = null)
+    {
+        anims.Add(new AnimItem()
+        {
+            Execute = () =>
+            {
+                HideArrows();
+                indexBox.arrow.SetActive(true);
+                code.Mark(codeLine-1);
+                SetStatusText(status);
+                index.Mark(indexName, idx);
+                if (resetIndex != null) index.Unmark(resetIndex);
+            }
+        });
+    }
 
-    bool Compare(List<Box> boxes, int codeLine, string status, int i, int j)
+    public bool Compare(List<Box> boxes, int codeLine, string status, int i, int j)
     {
         var b1 = boxes[i];
         var b2 = boxes[j];
@@ -104,7 +120,7 @@ public class Setup : MonoBehaviour
         {
             Execute = () =>
             {
-                index.Mark(i);
+                index.Mark("i", i);
                 code.Mark(codeLine-1);
                 SetStatusText(status);
                 AnimateCompare(b1, b2);
@@ -113,7 +129,7 @@ public class Setup : MonoBehaviour
         return boxes[i].value > boxes[j].value;
     }
     
-    void Swap(List<Box> boxes, int codeLine, string status, int i, int j)
+    public void Swap(List<Box> boxes, int codeLine, string status, int i, int j)
     {
         var b1 = boxes[i];
         var b2 = boxes[j];
@@ -137,31 +153,16 @@ public class Setup : MonoBehaviour
             }
         });
     }
-
-    void BubbleSort(List<Box> boxes)
-    {
-        Anim_Code(2, "for i in 0..5");
-        for (var i = 0; i < boxes.Count - 1; i++)
-        {
-            if (Compare(boxes, 3, $"arr[{i}] > arr[{i+1}] ?", i, i + 1))
-            {
-                Swap(boxes, 4, $"Swap arr[{i}] and arr[{i+1}]", i, i + 1);
-
-                Anim_Code(5, "Restart Loop");
-                BubbleSort(boxes);
-                
-                return;
-            }
-        }
-    }
     
-    void Start()
+
+    public List<Box> Init(List<int> list, string srcCode)
     {
-        var list = new List<int> { 53, 17, 29, 5, 88, 22, 33 };
-        
+        code.Init(srcCode);
         index.Init(list.Count);
         
-        
+        foreach(var b in allBoxes) Destroy(b.gameObject);
+        this.animIndex = 0;
+        this.anims.Clear();
         
         this.allBoxes = list.Select(i =>
         {
@@ -171,12 +172,8 @@ public class Setup : MonoBehaviour
             fab.value = i;
             return fab;
         }).ToList();
-        
-        Anim_Code(1, "Start of Bubble Sort");
-        BubbleSort(allBoxes);
-        Anim_Code(6, "End of Bubble Sort");
 
-        Step();
+        return allBoxes;
     }
 
     public int animIndex = 0;
