@@ -19,13 +19,14 @@ public class Setup : MonoBehaviour
 {
     public Box prefab;
     public Transform layout;
-
+    
     public List<Box> allBoxes;
 
     public List<AnimItem> anims = new();
 
     public TextMeshProUGUI statusText;
 
+    public IndexBehaviour index;
     public CodeBehaviour code;
 
     public UnityEvent onStartSwap;
@@ -33,7 +34,7 @@ public class Setup : MonoBehaviour
 
     void AnimateCompare(Box b1, Box b2)
     {
-        foreach(var b in allBoxes) b.arrow.SetActive(false);
+        HideArrows();
         b1.arrow.SetActive(true);
         b2.arrow.SetActive(true);
     }
@@ -43,10 +44,15 @@ public class Setup : MonoBehaviour
         statusText.text = $"Step {animIndex + 1}: {s}";
     }
 
+    void HideArrows()
+    {
+        foreach(var b in allBoxes) b.arrow.SetActive(false);
+    }
+
     void AnimateSwap(Box b1, Box b2)
     {
         onStartSwap.Invoke();
-        foreach(var b in allBoxes) b.arrow.SetActive(false);
+        HideArrows();
         b1.arrow.SetActive(true);
         b2.arrow.SetActive(true);
         
@@ -83,6 +89,7 @@ public class Setup : MonoBehaviour
         {
             Execute = () =>
             {
+                HideArrows();
                 code.Mark(codeLine-1);
                 SetStatusText(status);
             }
@@ -97,6 +104,7 @@ public class Setup : MonoBehaviour
         {
             Execute = () =>
             {
+                index.Mark(i);
                 code.Mark(codeLine-1);
                 SetStatusText(status);
                 AnimateCompare(b1, b2);
@@ -132,10 +140,10 @@ public class Setup : MonoBehaviour
 
     void BubbleSort(List<Box> boxes)
     {
-        Anim_Code(2, "for i in 0..6");
+        Anim_Code(2, "for i in 0..5");
         for (var i = 0; i < boxes.Count - 1; i++)
         {
-            if (Compare(boxes, 3, $"i={i}  arr[{i}] > arr[{i+1}] ?", i, i + 1))
+            if (Compare(boxes, 3, $"arr[{i}] > arr[{i+1}] ?", i, i + 1))
             {
                 Swap(boxes, 4, $"Swap arr[{i}] and arr[{i+1}]", i, i + 1);
 
@@ -151,7 +159,10 @@ public class Setup : MonoBehaviour
     {
         var list = new List<int> { 53, 17, 29, 5, 88, 22, 33 };
         
+        index.Init(list.Count);
+        
         Anim_Code(1, "Start of Bubble Sort");
+        
         
         this.allBoxes = list.Select(i =>
         {
