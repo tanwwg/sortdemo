@@ -32,7 +32,7 @@ public class InsertionSortBehaviour : MonoBehaviour
             
             while (pos > 0)
             {
-                if (setup.Compare(boxes, 4, $"arr[{pos}] > arr[{pos-1}]?", pos, pos - 1)) break;
+                if (setup.Compare(boxes, 4, $"arr[{pos}] < arr[{pos-1}]?", pos, pos - 1)) break;
                 
                 setup.Swap(boxes, 5, "Swap", pos, pos-1);
 
