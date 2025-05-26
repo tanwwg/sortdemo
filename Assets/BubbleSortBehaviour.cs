@@ -25,6 +25,8 @@ public class BubbleSortBehaviour : MonoBehaviour
         setup.Anim_Code(2, "for i in 0..5");
         for (var i = 0; i < boxes.Count - 1; i++)
         {
+            setup.Anim_Index($"i={i}", 2, "i", boxes[i], i);
+            
             if (setup.Compare(boxes, 3, $"arr[{i}] > arr[{i+1}] ?", i, i + 1))
             {
                 setup.Swap(boxes, 4, $"Swap arr[{i}] and arr[{i+1}]", i, i + 1);

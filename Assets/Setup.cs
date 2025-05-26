@@ -120,7 +120,6 @@ public class Setup : MonoBehaviour
         {
             Execute = () =>
             {
-                index.Mark("i", i);
                 code.Mark(codeLine-1);
                 SetStatusText(status);
                 AnimateCompare(b1, b2);
