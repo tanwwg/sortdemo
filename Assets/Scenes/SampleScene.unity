@@ -2304,13 +2304,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b3da45d50e84de48a944379765e513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  code: "<string>\n<color=#569CD6>def</color> <color=#DCDCAA>insertionSort</color>(<color=#9CDCFE>arr</color>):\n   
+  code: "<color=#569CD6>def</color> <color=#DCDCAA>insertionSort</color>(<color=#9CDCFE>arr</color>):\n   
     <color=#C586C0>for</color> <color=#9CDCFE>i</color> <color=#C586C0>in</color>
     <color=#569CD6>range</color>(<color=#B5CEA8>1</color>, <color=#569CD6>len</color>(arr)):\n       
     <color=#9CDCFE>pos</color> = i\n        <color=#C586C0>while</color> pos > <color=#B5CEA8>0</color>
     <color=#C586C0>and</color> arr[pos] < arr[pos - <color=#B5CEA8>1</color>]:\n           
     arr[pos], arr[pos - <color=#B5CEA8>1</color>] = arr[pos - <color=#B5CEA8>1</color>],
-    arr[pos]\n            pos -= <color=#B5CEA8>1</color>\n</string>"
+    arr[pos]\n            pos -= <color=#B5CEA8>1</color>"
   setup: {fileID: 1413326027}
 --- !u!1 &1218001780
 GameObject:
